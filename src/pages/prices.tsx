@@ -1,6 +1,6 @@
 import './prices.css'
 import { type PaperInfo, usePricesFetcher } from '../hooks/fetchers/prices-fetcher'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
 type PaperSize = 'A4' | 'A5' | 'B4' | 'B5'
 
@@ -14,15 +14,41 @@ const filterPrices = (prices: PaperInfo[][], quantity: number): PaperInfo[] => {
     .flatMap((value) => value)
 }
 
+const getHighlightPrices = (prices: PaperInfo[][], price: PaperInfo | null): number[] => {
+  if (price === null) return []
+  const filteredPrices = prices
+    .map((items) =>
+      items.filter(
+        (item) =>
+          item.price !== price.price &&
+          (item.business_day === price.business_day || item.quantity === price.quantity),
+      ),
+    )
+    .flatMap((value) => value)
+
+  return filteredPrices.map((item) => item.price)
+}
+
+const getIsHighlight = (prices: number[], target: number): boolean => {
+  return prices.some((price) => price === target)
+}
+
 function Prices(): JSX.Element {
   const [paperSize, setPaperSize] = useState(DEFAULT_PAPER_SIZE)
   const [selectedPageSize, setSelectedPageSize] = useState(DEFAULT_PAPER_SIZE)
   const [selectedPrice, setSelectedPrice] = useState(0)
+  const [hoveredPrice, setHoveredPrice] = useState<PaperInfo | null>(null)
+
   const [isDisabledViewMoreButton, setIsDisabledViewMoreButton] = useState(false)
 
   const { data, isValidating } = usePricesFetcher(paperSize)
 
   const prices = data?.prices ?? []
+  const highlightPrices = useMemo(
+    () => getHighlightPrices(prices, hoveredPrice),
+    [prices, hoveredPrice],
+  )
+
   const quantities = prices.map((price) => price[0].quantity)
   const slicedQuantities = quantities.slice(0, 5)
   const displayedQuantities = isDisabledViewMoreButton ? quantities : slicedQuantities
@@ -84,9 +110,17 @@ function Prices(): JSX.Element {
                       {filteredPrices.map((item) => (
                         <td
                           key={item.price}
-                          className="table-data"
+                          className={`table-data ${
+                            getIsHighlight(highlightPrices, item.price) ? 'highlight' : ''
+                          }`}
                           onClick={() => {
                             setSelectedPrice(item.price)
+                          }}
+                          onMouseEnter={() => {
+                            setHoveredPrice(item)
+                          }}
+                          onMouseLeave={() => {
+                            setHoveredPrice(null)
                           }}
                         >
                           {item.price}円
