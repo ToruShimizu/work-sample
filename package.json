@@ -1,6 +1,7 @@
 {
   "name": "work-sample-toru-shimizu",
   "version": "0.1.0",
+  "homepage": "/prices",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
