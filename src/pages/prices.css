@@ -1,0 +1,64 @@
+.pages-prices {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px;
+  height: 100vh;
+
+  .prices-container {
+    display: grid;
+    grid-template-columns: minmax(0, 240px) 1fr;
+    gap: 24px;
+  }
+
+  .size-wrapper,
+  .table-wrapper,
+  .amount-wrapper {
+    background-color: #e6e6e6;
+    padding: 16px;
+  }
+
+  .size-wrapper {
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    gap: 12px;
+    min-height: 400px;
+    .size {
+      width: 100%;
+    }
+    .adoption-button {
+      margin-top: auto;
+    }
+  }
+
+  .table-wrapper {
+    display: grid;
+    gap: 12px;
+    width: 100%;
+    grid-template-rows: auto 1fr;
+    min-height: 400px;
+    .table {
+      width: 100%;
+      table-layout: fixed;
+      background-color: #fff;
+      border-collapse: collapse;
+      text-align: center;
+    }
+    .table,
+    .table-header,
+    .table-data {
+      border: 1px solid #ccc;
+      padding: 4px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+  }
+
+  .amount-wrapper {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    gap: 24px;
+    justify-content: end;
+    align-items: center;
+  }
+}
