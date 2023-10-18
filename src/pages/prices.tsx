@@ -18,11 +18,14 @@ function Prices(): JSX.Element {
   const [paperSize, setPaperSize] = useState(DEFAULT_PAPER_SIZE)
   const [selectedPageSize, setSelectedPageSize] = useState(DEFAULT_PAPER_SIZE)
   const [selectedPrice, setSelectedPrice] = useState(0)
+  const [isDisabledViewMoreButton, setIsDisabledViewMoreButton] = useState(false)
 
   const { data, isValidating } = usePricesFetcher(paperSize)
 
   const prices = data?.prices ?? []
   const quantities = prices.map((price) => price[0].quantity)
+  const slicedQuantities = quantities.slice(0, 5)
+  const displayedQuantities = isDisabledViewMoreButton ? quantities : slicedQuantities
 
   return (
     <div className="pages-prices">
@@ -73,7 +76,7 @@ function Prices(): JSX.Element {
                 </tr>
               </thead>
               <tbody>
-                {quantities.map((quantity) => {
+                {displayedQuantities.map((quantity) => {
                   const filteredPrices = filterPrices(prices, quantity)
                   return (
                     <tr key={quantity}>
@@ -94,6 +97,15 @@ function Prices(): JSX.Element {
                 })}
               </tbody>
             </table>
+          )}
+          {!isDisabledViewMoreButton && (
+            <button
+              onClick={() => {
+                setIsDisabledViewMoreButton(true)
+              }}
+            >
+              もっと見る
+            </button>
           )}
         </div>
 
