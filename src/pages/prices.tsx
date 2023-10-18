@@ -1,11 +1,27 @@
 import './prices.css'
+import { type PaperInfo, usePricesFetcher } from '../hooks/fetchers/prices-fetcher'
+import { useState } from 'react'
 
 type PaperSize = 'A4' | 'A5' | 'B4' | 'B5'
 
 const PAPER_SIZES: PaperSize[] = ['A4', 'A5', 'B4', 'B5']
+const DEFAULT_PAPER_SIZE = 'A4'
 const BUSINESS_DAYS = [1, 2, 3, 4, 5]
 
+const filterPrices = (prices: PaperInfo[][], quantity: number): PaperInfo[] => {
+  return prices
+    .map((items) => items.filter((item) => item.quantity === quantity))
+    .flatMap((value) => value)
+}
+
 function Prices(): JSX.Element {
+  const [paperSize] = useState(DEFAULT_PAPER_SIZE)
+
+  const { data, isValidating } = usePricesFetcher(paperSize)
+
+  const prices = data?.prices ?? []
+  const quantities = prices.map((price) => price[0].quantity)
+
   return (
     <div className="pages-prices">
       <div className="prices-container">
@@ -16,7 +32,7 @@ function Prices(): JSX.Element {
           <div>
             <select name="size" id="size" className="size">
               {PAPER_SIZES.map((size) => (
-                <option key={size} value={size} defaultValue="A4">
+                <option key={size} value={size} defaultValue={DEFAULT_PAPER_SIZE}>
                   {size}
                 </option>
               ))}
@@ -24,27 +40,39 @@ function Prices(): JSX.Element {
           </div>
           <button className="adoption-button">適用</button>
         </div>
-
         <div className="table-wrapper">
           <p>価格表</p>
-          <table className="table">
-            <thead>
-              <tr>
-                <th />
-                {BUSINESS_DAYS.map((day) => (
-                  <th key={day} className="table-header">
-                    {day}日
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th className="table-header">100部数</th>
-                <td className="table-data">1000円</td>
-              </tr>
-            </tbody>
-          </table>
+          {isValidating ? (
+            <span className="loading">Loading...</span>
+          ) : (
+            <table className="table">
+              <thead>
+                <tr>
+                  <th />
+                  {BUSINESS_DAYS.map((day) => (
+                    <th key={day} className="table-header">
+                      {day}日
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {quantities.map((quantity) => {
+                  const filteredPrices = filterPrices(prices, quantity)
+                  return (
+                    <tr key={quantity}>
+                      <th className="table-header">{quantity}部数</th>
+                      {filteredPrices.map((item) => (
+                        <td key={item.price} className="table-data">
+                          {item.price}円
+                        </td>
+                      ))}
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          )}
         </div>
 
         <div className="amount-wrapper">

@@ -61,4 +61,9 @@
     justify-content: end;
     align-items: center;
   }
+  .loading {
+    display: grid;
+    align-items: center;
+    text-align: center;
+  }
 }
