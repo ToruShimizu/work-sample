@@ -15,7 +15,8 @@ const filterPrices = (prices: PaperInfo[][], quantity: number): PaperInfo[] => {
 }
 
 function Prices(): JSX.Element {
-  const [paperSize] = useState(DEFAULT_PAPER_SIZE)
+  const [paperSize, setPaperSize] = useState(DEFAULT_PAPER_SIZE)
+  const [selectedPageSize, setSelectedPageSize] = useState(DEFAULT_PAPER_SIZE)
 
   const { data, isValidating } = usePricesFetcher(paperSize)
 
@@ -30,7 +31,14 @@ function Prices(): JSX.Element {
             <label htmlFor="size">検索条件</label>
           </div>
           <div>
-            <select name="size" id="size" className="size">
+            <select
+              name="size"
+              id="size"
+              className="size"
+              onChange={(e) => {
+                setSelectedPageSize(e.target.value)
+              }}
+            >
               {PAPER_SIZES.map((size) => (
                 <option key={size} value={size} defaultValue={DEFAULT_PAPER_SIZE}>
                   {size}
@@ -38,7 +46,14 @@ function Prices(): JSX.Element {
               ))}
             </select>
           </div>
-          <button className="adoption-button">適用</button>
+          <button
+            className="adoption-button"
+            onClick={() => {
+              setPaperSize(selectedPageSize)
+            }}
+          >
+            適用
+          </button>
         </div>
         <div className="table-wrapper">
           <p>価格表</p>
