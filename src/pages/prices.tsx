@@ -17,6 +17,7 @@ const filterPrices = (prices: PaperInfo[][], quantity: number): PaperInfo[] => {
 function Prices(): JSX.Element {
   const [paperSize, setPaperSize] = useState(DEFAULT_PAPER_SIZE)
   const [selectedPageSize, setSelectedPageSize] = useState(DEFAULT_PAPER_SIZE)
+  const [selectedPrice, setSelectedPrice] = useState(0)
 
   const { data, isValidating } = usePricesFetcher(paperSize)
 
@@ -78,7 +79,13 @@ function Prices(): JSX.Element {
                     <tr key={quantity}>
                       <th className="table-header">{quantity}部数</th>
                       {filteredPrices.map((item) => (
-                        <td key={item.price} className="table-data">
+                        <td
+                          key={item.price}
+                          className="table-data"
+                          onClick={() => {
+                            setSelectedPrice(item.price)
+                          }}
+                        >
                           {item.price}円
                         </td>
                       ))}
@@ -91,8 +98,7 @@ function Prices(): JSX.Element {
         </div>
 
         <div className="amount-wrapper">
-          <p className="amount">注文金額 9999円</p>
-          <button>カート</button>
+          <p className="amount">注文金額 {selectedPrice}円</p> <button>カート</button>
         </div>
       </div>
     </div>
