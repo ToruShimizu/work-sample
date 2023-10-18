@@ -1,6 +1,7 @@
 import './prices.css'
 import { type PaperInfo, usePricesFetcher } from '../hooks/fetchers/prices-fetcher'
 import { useMemo, useState } from 'react'
+import { formatNumber } from '../utils/format-number'
 
 type PaperSize = 'A4' | 'A5' | 'B4' | 'B5'
 
@@ -123,7 +124,7 @@ function Prices(): JSX.Element {
                             setHoveredPrice(null)
                           }}
                         >
-                          {item.price}円
+                          {formatNumber(item.price)}円
                         </td>
                       ))}
                     </tr>
@@ -144,7 +145,7 @@ function Prices(): JSX.Element {
         </div>
 
         <div className="amount-wrapper">
-          <p className="amount">注文金額 {selectedPrice}円</p> <button>カート</button>
+          <p className="amount">注文金額 {formatNumber(selectedPrice)}円</p> <button>カート</button>
         </div>
       </div>
     </div>
